@@ -1,78 +1,69 @@
-
 /**
  * Write a description of class Horse here.
  * 
- * @author (your name) 
+ * @author Habib Ahmed 
  * @version (a version number or a date)
  */
-public class Horse
-{
-    //Fields of class Horse
-    
-    
-      
-    //Constructor of class Horse
-    /**
-     * Constructor for objects of class Horse
-     */
-    public Horse(char horseSymbol, String horseName, double horseConfidence)
-    {
-       
-    }
-    
-    
-    
-    //Other methods of class Horse
-    public void fall()
-    {
-        
-    }
-    
-    public double getConfidence()
-    {
-        
-    }
-    
-    public int getDistanceTravelled()
-    {
-        
-    }
-    
-    public String getName()
-    {
-        
-    }
-    
-    public char getSymbol()
-    {
-        
-    }
-    
-    public void goBackToStart()
-    {
-        
-    }
-    
-    public boolean hasFallen()
-    {
-        
+public class Horse {
+    private String name;
+    private char symbol;
+    private int distanceTravelled;
+    private boolean hasFallen;
+    private double confidence;
+
+    public Horse(char horseSymbol, String horseName, double horseConfidence) {
+        this.symbol = horseSymbol;
+        this.name = horseName;
+        this.confidence = horseConfidence;
+        this.distanceTravelled = 0;
+        this.hasFallen = false;
     }
 
-    public void moveForward()
-    {
-        
+    public void fall() {
+        this.hasFallen = true;
     }
 
-    public void setConfidence(double newConfidence)
-    {
-        
+    public double getConfidence() {
+        return this.confidence;
+    }
+
+    public int getDistanceTravelled() {
+        return this.distanceTravelled;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public char getSymbol() {
+        return this.symbol;
+    }
+
+    public void goBackToStart() {
+        this.distanceTravelled = 0;
+        this.hasFallen = false;
+    }
+
+    public boolean hasFallen() {
+        return this.hasFallen;
+    }
+
+    public void moveForward() {
+        if (!this.hasFallen) {
+            this.distanceTravelled++;
+        }
+    }
+
+    public void setConfidence(double newConfidence) {
+        if (newConfidence >= 0 && newConfidence <= 1) {
+            this.confidence = newConfidence;
+        }
     }
     
-    public void setSymbol(char newSymbol)
-    {
-        
+    public void setSymbol(char newSymbol) {
+        this.symbol = newSymbol;
     }
-    
 }
+
 
 
