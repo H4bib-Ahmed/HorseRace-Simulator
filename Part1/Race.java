@@ -87,12 +87,23 @@ public class Race
             {
                 finished = true;
             }
+            else if (allHorsesHaveFallen())
+            {
+                finished = true;
+                System.out.println("All horses have fallen. Race is over.");
+            }
            
             //wait for 100 milliseconds
             try{ 
                 TimeUnit.MILLISECONDS.sleep(100);
             }catch(Exception e){}
         }
+    }
+
+    private boolean allHorsesHaveFallen() {
+        return (lane1Horse != null && lane1Horse.hasFallen()) &&
+               (lane2Horse != null && lane2Horse.hasFallen()) &&
+               (lane3Horse != null && lane3Horse.hasFallen());
     }
     
     /**

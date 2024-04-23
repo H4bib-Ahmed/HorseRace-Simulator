@@ -8,7 +8,7 @@
 public class main {
     public static void main(String[] args) {
         // Create a new Race with a length of 100 meters.
-        Race race = new Race(100);
+        Race race = new Race(20);
 
         // Create Horse objects
         Horse horse1 = new Horse('♘', "PIPPI LONGSTOCKING", 0.6);
