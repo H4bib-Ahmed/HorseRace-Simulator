@@ -153,6 +153,16 @@ public class Race
             return false;
         }
     }
+
+    private void printHorseDetail(Horse horse) {
+        System.out.printf("Horse %s (%s): Confidence Level = %.1f\n",
+                          horse.getName(), horse.getSymbol(), horse.getConfidence());
+    }
+
+    private void printLaneWithDetails(Horse horse) {
+        printLane(horse); // This prints the lane itself.
+        printHorseDetail(horse); // This prints the horse's detail beside the lane.
+    }
     
     /***
      * Print the race on the terminal
@@ -163,15 +173,10 @@ public class Race
         
         multiplePrint('=',raceLength+3); //top edge of track
         System.out.println();
-        
-        printLane(lane1Horse);
-        System.out.println();
-        
-        printLane(lane2Horse);
-        System.out.println();
-        
-        printLane(lane3Horse);
-        System.out.println();
+
+        printLaneWithDetails(lane1Horse);
+        printLaneWithDetails(lane2Horse);
+        printLaneWithDetails(lane3Horse);
         
         multiplePrint('=',raceLength+3); //bottom edge of track
         System.out.println();    
