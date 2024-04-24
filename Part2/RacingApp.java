@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintStream;
+import javax.swing.JLabel;
+import java.awt.Font;
 public class RacingApp extends JFrame {
     private JButton startRaceButton;
     private JButton customizeHorseButton; // Button to customize horses
@@ -20,10 +22,13 @@ public class RacingApp extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
         JPanel controlPanel = new JPanel(new FlowLayout());
+        JLabel title = new JLabel("Horse Racing Simulation"); // Fix: Declare the title variable locally
         startRaceButton = new JButton("Start Race");
         customizeHorseButton = new JButton("Customize Horse");
         changeColorButton = new JButton("Change Track Color"); // New button
         trackLengthField = new JTextField("30", 10); // Default track length
+
+        controlPanel.add(title);
         controlPanel.add(trackLengthField);
         controlPanel.add(startRaceButton);
         controlPanel.add(customizeHorseButton);
@@ -44,6 +49,7 @@ public class RacingApp extends JFrame {
         trackPanel.setBackground(Color.WHITE); // Set initial track color
         mainPanel.add(trackPanel, BorderLayout.SOUTH); // Add the track panel to the main panel
 
+
         add(mainPanel);
 
         // Initialize horses
@@ -54,6 +60,7 @@ public class RacingApp extends JFrame {
         };
 
         addListeners(); // Add action listeners for buttons
+
     }
 
     private void addListeners() {
