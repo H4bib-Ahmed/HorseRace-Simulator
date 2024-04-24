@@ -6,6 +6,7 @@ import java.io.PrintStream;
 
 public class RacingApp extends JFrame {
     private JButton startRaceButton; // Start Race button
+    private JTextField trackLengthField; // Field for race track length
     private JTextArea outputArea;
     private Horse[] horses; // Array to store horses
 
@@ -16,9 +17,12 @@ public class RacingApp extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Control panel with only the Start Race button
+        // Control panel with Start Race button and track length field
         JPanel controlPanel = new JPanel(new FlowLayout());
+        trackLengthField = new JTextField("30", 10); // Default track length
         startRaceButton = new JButton("Start Race");
+        controlPanel.add(new JLabel("Track Length:"));
+        controlPanel.add(trackLengthField);
         controlPanel.add(startRaceButton);
 
         mainPanel.add(controlPanel, BorderLayout.NORTH);
@@ -35,7 +39,7 @@ public class RacingApp extends JFrame {
 
         add(mainPanel);
 
-        // Initialize horses with fixed data
+        // Initialize horses
         horses = new Horse[]{
             new Horse('\u265E', "Horse 1", 0.8),
             new Horse('\u265F', "Horse 2", 0.5),
@@ -49,8 +53,15 @@ public class RacingApp extends JFrame {
         startRaceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                int trackLength;
+                try {
+                    trackLength = Integer.parseInt(trackLengthField.getText());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Invalid track length. Please enter a valid number.");
+                    return;
+                }
+
                 new Thread(() -> {
-                    int trackLength = 30; // Fixed track length
                     Race race = new Race(trackLength);
 
                     // Add horses to the race
@@ -88,6 +99,7 @@ public class RacingApp extends JFrame {
         }
     }
 }
+
 
 
 
