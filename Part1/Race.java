@@ -83,8 +83,22 @@ public class Race
             printRace();
             
             //if any of the three horses has won the race is finished
-            if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
+            if ( raceWonBy(lane1Horse))
             {
+                increaseConfidence(lane1Horse);
+                printRace();
+                finished = true;
+            }
+            else if (raceWonBy(lane2Horse))
+            {
+                increaseConfidence(lane2Horse);
+                printRace();
+                finished = true;
+            }
+            else if (raceWonBy(lane3Horse))
+            {
+                increaseConfidence(lane3Horse);
+                printRace();
                 finished = true;
             }
             else if (allHorsesHaveFallen())
@@ -135,6 +149,14 @@ public class Race
                 decreaseConfidence(theHorse);
             }
         }
+    }
+
+    private void increaseConfidence(Horse horse) {
+        double newConfidence = horse.getConfidence() + 0.1;
+        if (newConfidence > 1.0) {
+            newConfidence = 1.0; // Cap the confidence at 1.0
+        }
+        horse.setConfidence(newConfidence); // Update the horse's confidence
     }
 
     private void decreaseConfidence(Horse horse) {
