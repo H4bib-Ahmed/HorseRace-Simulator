@@ -3,13 +3,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintStream;
-
 public class RacingApp extends JFrame {
     private JButton startRaceButton;
     private JButton customizeHorseButton; // Button to customize horses
+    private JButton changeColorButton; // Button to change track color
     private JTextField trackLengthField;
     private JTextArea outputArea;
     private Horse[] horses; // Array to store horses
+    private JPanel trackPanel; // Panel to display the track
 
     public RacingApp() {
         setTitle("Racing Application");
@@ -21,10 +22,12 @@ public class RacingApp extends JFrame {
         JPanel controlPanel = new JPanel(new FlowLayout());
         startRaceButton = new JButton("Start Race");
         customizeHorseButton = new JButton("Customize Horse");
+        changeColorButton = new JButton("Change Track Color"); // New button
         trackLengthField = new JTextField("30", 10); // Default track length
         controlPanel.add(trackLengthField);
         controlPanel.add(startRaceButton);
         controlPanel.add(customizeHorseButton);
+        controlPanel.add(changeColorButton); // Add the button to the control panel
 
         mainPanel.add(controlPanel, BorderLayout.NORTH);
 
@@ -37,13 +40,17 @@ public class RacingApp extends JFrame {
         PrintStream printStream = new PrintStream(new TextAreaOutputStream(outputArea));
         System.setOut(printStream); // Redirect System.out
 
+        trackPanel = new JPanel(); // Create the track panel
+        trackPanel.setBackground(Color.WHITE); // Set initial track color
+        mainPanel.add(trackPanel, BorderLayout.SOUTH); // Add the track panel to the main panel
+
         add(mainPanel);
 
         // Initialize horses
         horses = new Horse[]{
-            new Horse('H', "PIPPI LONGSTOCKING", 0.6),
-            new Horse('X', "KOKOMO", 0.7),
-            new Horse('Y', "EL JEFE", 0.5)
+                new Horse('H', "PIPPI LONGSTOCKING", 0.6),
+                new Horse('X', "KOKOMO", 0.7),
+                new Horse('Y', "EL JEFE", 0.5)
         };
 
         addListeners(); // Add action listeners for buttons
@@ -83,6 +90,16 @@ public class RacingApp extends JFrame {
                 customDialog.setVisible(true); // Show the dialog
             }
         });
+
+        changeColorButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color newColor = JColorChooser.showDialog(RacingApp.this, "Choose Track Color", trackPanel.getBackground());
+                if (newColor != null) {
+                    outputArea.setBackground(newColor);
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -91,21 +108,21 @@ public class RacingApp extends JFrame {
         });
     }
 
-        // Custom OutputStream to redirect System.out to JTextArea
-        class TextAreaOutputStream extends java.io.OutputStream {
-            private JTextArea textArea;
-        
-            public TextAreaOutputStream(JTextArea textArea) {
-                this.textArea = textArea;
-                textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-            }
-        
-            @Override
-            public void write(int b) {
-                textArea.append(String.valueOf((char) b));
-                textArea.setCaretPosition(textArea.getDocument().getLength()); // Auto-scroll to the bottom
-            }
+    // Custom OutputStream to redirect System.out to JTextArea
+    class TextAreaOutputStream extends java.io.OutputStream {
+        private JTextArea textArea;
+
+        public TextAreaOutputStream(JTextArea textArea) {
+            this.textArea = textArea;
+            textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         }
+
+        @Override
+        public void write(int b) {
+            textArea.append(String.valueOf((char) b));
+            textArea.setCaretPosition(textArea.getDocument().getLength()); // Auto-scroll to the bottom
+        }
+    }
 }
 
 // Custom Horse Dialog with Unicode Symbol Selection
@@ -128,9 +145,9 @@ class CustomHorseDialog extends JDialog {
 
         // Horse selection
         horseSelector = new JComboBox<>(new String[]{
-            "Horse 1",
-            "Horse 2",
-            "Horse 3"
+                "Horse 1",
+                "Horse 2",
+                "Horse 3"
         });
         customPanel.add(new JLabel("Select Horse:"));
         customPanel.add(horseSelector);
@@ -142,11 +159,11 @@ class CustomHorseDialog extends JDialog {
 
         // Unicode symbol selection
         symbolComboBox = new JComboBox<>(new Character[]{
-            '\u265E', // Black Chess Knight
-            '\u265F', // Black Chess Pawn
-            '\u265A', // Black Chess King
-            '\u265B', // Black Chess Queen
-            '\u265C'  // Black Chess Rook
+                '\u265E', // Black Chess Knight
+                '\u265F', // Black Chess Pawn
+                '\u265A', // Black Chess King
+                '\u265B', // Black Chess Queen
+                '\u265C'  // Black Chess Rook
         });
         customPanel.add(new JLabel("Select Horse Symbol:"));
         customPanel.add(symbolComboBox);
@@ -181,6 +198,7 @@ class CustomHorseDialog extends JDialog {
         });
     }
 }
+
 
 
 
