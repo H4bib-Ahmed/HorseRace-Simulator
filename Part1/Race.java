@@ -87,18 +87,21 @@ public class Race
             {
                 increaseConfidence(lane1Horse);
                 printRace();
+                System.out.println("Winner: " + lane1Horse.getName());
                 finished = true;
             }
             else if (raceWonBy(lane2Horse))
             {
                 increaseConfidence(lane2Horse);
                 printRace();
+                System.out.println("Winner: " + lane2Horse.getName());
                 finished = true;
             }
             else if (raceWonBy(lane3Horse))
             {
                 increaseConfidence(lane3Horse);
                 printRace();
+                System.out.println("Winner: " + lane3Horse.getName());
                 finished = true;
             }
             else if (allHorsesHaveFallen())
