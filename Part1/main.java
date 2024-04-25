@@ -8,12 +8,12 @@
 public class main {
     public static void main(String[] args) {
         // Create a new Race with a length of 100 meters.
-        Race race = new Race(20);
+        Race race = new Race(30);
 
         // Create Horse objects
         Horse horse1 = new Horse('♘', "PIPPI LONGSTOCKING", 0.6);
         Horse horse2 = new Horse('♞', "KOKOMO", 0.7);
-        Horse horse3 = new Horse('❌', "EL JEFE", 0.5);
+        Horse horse3 = new Horse('♞', "EL JEFE", 0.5);
 
         // Add horses to the race
         race.addHorse(horse1, 1);
