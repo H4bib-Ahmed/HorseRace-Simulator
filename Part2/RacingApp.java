@@ -1,18 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.PrintStream;
-import javax.swing.JLabel;
-import java.awt.Font;
+import java.util.*;
+
 public class RacingApp extends JFrame {
     private JButton startRaceButton;
-    private JButton customizeHorseButton; // Button to customize horses
-    private JButton changeColorButton; // Button to change track color
+    private JButton customizeHorseButton; 
+    private JButton changeColorButton;
+    private JButton displayBalanceButton;
+    private JButton placeBetButton; // New button to place bets
     private JTextField trackLengthField;
     private JTextArea outputArea;
-    private Horse[] horses; // Array to store horses
-    private JPanel trackPanel; // Panel to display the track
+    private Horse[] horses;
+    private JPanel trackPanel;
+    private JButton displayWinnings;
+    private BettingSystem bettingSystem; // Betting system for virtual bets
+
 
     public RacingApp() {
         setTitle("Racing Application");
@@ -21,18 +25,27 @@ public class RacingApp extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
+        // Control panel with all buttons
         JPanel controlPanel = new JPanel(new FlowLayout());
-        JLabel title = new JLabel("Horse Racing Simulation"); // Fix: Declare the title variable locally
+        JLabel title = new JLabel("Horse Racing Simulation");
+        displayBalanceButton = new JButton("Display Balance");
+        displayWinnings = new JButton("Display Winnings");
         startRaceButton = new JButton("Start Race");
         customizeHorseButton = new JButton("Customize Horse");
-        changeColorButton = new JButton("Change Track Color"); // New button
+        changeColorButton = new JButton("Change Track Color");
+        placeBetButton = new JButton("Place Bet"); 
         trackLengthField = new JTextField("30", 10); // Default track length
 
         controlPanel.add(title);
         controlPanel.add(trackLengthField);
         controlPanel.add(startRaceButton);
         controlPanel.add(customizeHorseButton);
-        controlPanel.add(changeColorButton); // Add the button to the control panel
+        controlPanel.add(changeColorButton);
+        controlPanel.add(placeBetButton); // Add the place bet button to the control panel
+        controlPanel.add(displayBalanceButton);
+        controlPanel.add(displayWinnings);
+
+        
 
         mainPanel.add(controlPanel, BorderLayout.NORTH);
 
@@ -41,29 +54,30 @@ public class RacingApp extends JFrame {
         JScrollPane scrollPane = new JScrollPane(outputArea);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Redirect System.out to JTextArea
         PrintStream printStream = new PrintStream(new TextAreaOutputStream(outputArea));
-        System.setOut(printStream); // Redirect System.out
+        System.setOut(printStream);
 
-        trackPanel = new JPanel(); // Create the track panel
-        trackPanel.setBackground(Color.WHITE); // Set initial track color
-        mainPanel.add(trackPanel, BorderLayout.SOUTH); // Add the track panel to the main panel
-
+        trackPanel = new JPanel();
+        trackPanel.setBackground(Color.WHITE);
+        mainPanel.add(trackPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
 
-        // Initialize horses
+        // Initialize the horses
         horses = new Horse[]{
                 new Horse('H', "PIPPI LONGSTOCKING", 0.6),
                 new Horse('X', "KOKOMO", 0.7),
                 new Horse('Y', "EL JEFE", 0.5)
         };
 
-        addListeners(); // Add action listeners for buttons
+        // Initialize the betting system with a default balance
+        bettingSystem = new BettingSystem();
 
+        addListeners(); // Add action listeners for buttons
     }
 
     private void addListeners() {
+        // Listener for the Start Race button
         startRaceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -71,33 +85,57 @@ public class RacingApp extends JFrame {
                 try {
                     trackLength = Integer.parseInt(trackLengthField.getText());
                 } catch (NumberFormatException ex) {
-                    System.out.println("Invalid track length. Please enter a valid number.");
+                    System.out.println("Invalid track length.");
                     return;
                 }
 
                 new Thread(() -> {
                     Race race = new Race(trackLength);
-
-                    // Add horses to the race
                     race.addHorse(horses[0], 1);
                     race.addHorse(horses[1], 2);
                     race.addHorse(horses[2], 3);
+                    race.startRace();
 
-                    System.out.println("Starting the race...");
-                    race.startRace(); // Output redirected to JTextArea
                     System.out.println("Race completed!");
+
+                    // Process betting outcomes (assuming race has a way to get winners)
+                    String winner = "Horse 1"; // This should come from the race result
+                    bettingSystem.processBetOutcome(winner, true, bettingSystem.getOdds().get(winner));
                 }).start(); // Separate thread to avoid GUI freeze
             }
         });
 
+
+        // Listener for Display Balance button
+        displayBalanceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PlaceBetDialog dialog = new PlaceBetDialog(bettingSystem, horses);
+                dialog.displayBalance(bettingSystem);
+            }
+        });
+
+        // Listener for Display Winnings button
+        
+        // Listener for Customize Horse button
         customizeHorseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CustomHorseDialog customDialog = new CustomHorseDialog(horses); // Open custom dialog
-                customDialog.setVisible(true); // Show the dialog
+                customDialog.setVisible(true);
             }
         });
 
+        // Listener for Place Bet button
+        placeBetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PlaceBetDialog dialog = new PlaceBetDialog(bettingSystem, horses); // Dialog to place bets
+                dialog.setVisible(true);
+            }
+        });
+
+        // Listener for Change Color button
         changeColorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,6 +169,90 @@ public class RacingApp extends JFrame {
         }
     }
 }
+
+
+// Dialog for placing bets
+class PlaceBetDialog extends JDialog {
+    public PlaceBetDialog(BettingSystem bettingSystem, Horse[] horses) {
+        setTitle("Place Bet");
+        setSize(300, 200);
+        setLayout(new BorderLayout());
+
+        JPanel betPanel = new JPanel(new GridLayout(2, 2));
+
+        JComboBox<String> horseSelector = new JComboBox<>(new String[]{
+                "Horse 1",
+                "Horse 2",
+                "Horse 3"
+        });
+        JTextField betAmountField = new JTextField("100", 10); // Default bet amount
+
+        betPanel.add(new JLabel("Select Horse:"));
+        betPanel.add(horseSelector);
+        betPanel.add(new JLabel("Bet Amount:"));
+        betPanel.add(betAmountField);
+
+        add(betPanel, BorderLayout.CENTER);
+
+        // Save and Cancel buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton placeBetButton = new JButton("Place Bet");
+        JButton cancelBetButton = new JButton("Cancel");
+
+        buttonPanel.add(placeBetButton);
+        buttonPanel.add(cancelBetButton);
+
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        // Action to place the bet
+        placeBetButton.addActionListener(e -> {
+            int betAmount;
+            try {
+                betAmount = Integer.parseInt(betAmountField.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid bet amount.");
+                return;
+            }
+
+            String selectedHorse = horseSelector.getSelectedItem().toString();
+            if (bettingSystem.placeBet(selectedHorse, betAmount)) {
+                JOptionPane.showMessageDialog(this, "Bet placed successfully.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Insufficient virtual currency.");
+            }
+
+            dispose(); // Close the dialog
+        });
+
+        // Cancel button action
+        cancelBetButton.addActionListener(e -> dispose());
+    }
+
+    // display balance
+    public void displayBalance(BettingSystem bettingSystem) {
+        JOptionPane.showMessageDialog(this, "Current balance: " + bettingSystem.getVirtualCurrency());
+    }
+
+    
+    // display winnings
+    public void displayWinnings(BettingSystem bettingSystem) {
+        JOptionPane.showMessageDialog(this, "Total winnings: " + bettingSystem.getVirtualCurrency());
+    }
+
+    // display odds
+    public void displayOdds(BettingSystem bettingSystem) {
+        Map<String, Double> odds = bettingSystem.getOdds();
+        StringBuilder oddsText = new StringBuilder("Current Odds:\n");
+        for (Map.Entry<String, Double> entry : odds.entrySet()) {
+            oddsText.append(entry.getKey()).append(" - ").append(entry.getValue()).append("\n");
+        }
+        JOptionPane.showMessageDialog(this, oddsText.toString());
+    }
+
+    
+
+}
+
 
 // Custom Horse Dialog with Unicode Symbol Selection
 class CustomHorseDialog extends JDialog {
@@ -204,9 +326,5 @@ class CustomHorseDialog extends JDialog {
             dispose(); // Close the dialog without saving
         });
     }
+
 }
-
-
-
-
-
