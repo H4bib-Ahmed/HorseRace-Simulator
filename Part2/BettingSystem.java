@@ -39,6 +39,15 @@ public class BettingSystem {
             }
         }
     }
+
+    //calculate odds for each horse
+    public void calculateOdds(List<Horse> horses) {
+        for (Horse horse : horses) {
+            double winProbability = 1 / horse.getConfidence();
+            double winOdds = 1 / winProbability;
+            odds.put(horse.getName(), winOdds);
+        }
+    }
 }
 
 // Representing a single bet

@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.io.PrintStream;
 import java.util.*;
 
+
 public class RacingApp extends JFrame {
     private JButton startRaceButton;
     private JButton customizeHorseButton; 
@@ -17,7 +18,7 @@ public class RacingApp extends JFrame {
     private JButton displayWinnings;
     private BettingSystem bettingSystem; // Betting system for virtual bets
 
-
+    
     public RacingApp() {
         setTitle("Racing Application");
         setSize(800, 600);
@@ -73,10 +74,14 @@ public class RacingApp extends JFrame {
         // Initialize the betting system with a default balance
         bettingSystem = new BettingSystem();
 
-        addListeners(); // Add action listeners for buttons
+        StartRaceGUI(); // StartRaceGUI
     }
 
-    private void addListeners() {
+
+
+
+
+    private void StartRaceGUI() {
         // Listener for the Start Race button
         startRaceButton.addActionListener(new ActionListener() {
             @Override
